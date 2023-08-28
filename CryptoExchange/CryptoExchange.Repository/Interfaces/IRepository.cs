@@ -2,18 +2,16 @@
 
 namespace CryptoExchange.Repository.Interfaces
 {
-    public interface IRepository<TEntity> where TEntity : class
+    public interface IRepository<TEntity> where TEntity : Entity
     {
-        public Task<List<Entity>> GetAllAsync();
+        public Task<IEnumerable<TEntity>> GetAllAsync();
 
-        public Task<Entity> GetAsync(int id);
+        public Task<TEntity> GetAsync(int id);
 
-        public Task CreateAsync(Entity entity);
+        public Task CreateAsync(TEntity entity);
 
-        public void Update(Entity entity);
+        public void Update(TEntity entity);
 
-        public void Delete(Entity entity);
-
-        public Task SaveChangesAsync();
+        public void Delete(TEntity entity);
     }
 }
