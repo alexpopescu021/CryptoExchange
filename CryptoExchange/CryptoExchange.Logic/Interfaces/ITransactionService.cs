@@ -13,5 +13,7 @@ namespace CryptoExchange.Logic.Interfaces
 
         Task<bool> UpdateTransaction(Transaction transactionDetails);
 
+        Task<double> Convert(string convertFromSymbol, string convertToSymbol, double amount);
+
     }
 }

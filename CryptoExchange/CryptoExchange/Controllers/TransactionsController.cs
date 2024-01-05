@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CryptoExchange.Controllers
 {
+    //[Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class TransactionsController : ControllerBase
@@ -34,6 +35,13 @@ namespace CryptoExchange.Controllers
         [HttpPost]
         public void Post([FromBody] TransactionPostDto value)
         {
+        }
+
+        // POST api/<TransactionsController>/convert
+        [HttpPost("convert")]
+        public async Task<double> Post([FromBody] TransactionPostDto value, [FromHeader] double amount)
+        {
+            return await _transactionService.Convert(value.SourceCurrencyCode, value.TargetCurrencyCode, amount);
         }
 
         // PUT api/<TransactionsController>/5

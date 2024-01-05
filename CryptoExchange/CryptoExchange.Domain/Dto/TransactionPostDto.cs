@@ -4,9 +4,8 @@ namespace CryptoExchange.Domain.Dto
 {
     public class TransactionPostDto : Entity
     {
-        public int SourceCurrencyId { get; set; }
-        public int TargetCurrencyId { get; set; }
-        public decimal SourcePrice { get; set; }
+        public string SourceCurrencyCode { get; set; } = string.Empty;
+        public string TargetCurrencyCode { get; set; } = string.Empty;
 
     }
 }

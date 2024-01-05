@@ -2,7 +2,7 @@
 
 namespace CryptoExchange.Repository.Interfaces
 {
-    public interface ITransactionRepository : IRepository<Transaction>
+    public interface ITransactionRepository : IGenericRepository<Transaction>
     {
     }
 }

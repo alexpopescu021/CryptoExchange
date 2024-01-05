@@ -1,13 +1,13 @@
-﻿using CryptoExchange.Domain.Models;
-using CryptoExchange.Repository.Interfaces;
+﻿using CryptoExchange.Repository.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace CryptoExchange.Repository
 {
-    public abstract class GenericRepository<TEntity> : IRepository<TEntity> where TEntity : Entity
+    public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEntity : class
     {
         protected readonly DatabaseContext DbContext;
         protected readonly DbSet<TEntity> DbSet;
+
         public GenericRepository(DatabaseContext context)
         {
             DbContext = context;
@@ -19,9 +19,14 @@ namespace CryptoExchange.Repository
             return await DbSet.ToListAsync();
         }
 
+        public IQueryable<TEntity> GetQuery()
+        {
+            return DbSet.AsQueryable();
+        }
+
         public async Task<TEntity> GetAsync(int id)
         {
-            var result = await DbSet.FirstOrDefaultAsync(e => e.Id == id);
+            return (await DbContext.Set<TEntity>().FindAsync(id))!;
 
             //TODO Fix not found exception
             //if (result == null)
@@ -29,7 +34,6 @@ namespace CryptoExchange.Repository
             //    throw new HttpResponseException(HttpStatusCode.NotFound);
             //}
 
-            return await DbSet.FirstOrDefaultAsync(e => e.Id == id);
         }
 
         public async Task CreateAsync(TEntity entity)

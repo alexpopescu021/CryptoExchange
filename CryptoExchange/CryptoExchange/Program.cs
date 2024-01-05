@@ -1,10 +1,11 @@
-using CryptoExchange.Logic.Aggregates;
-using CryptoExchange.Logic.Interfaces;
+using CryptoExchange.Logic;
 using CryptoExchange.Repository;
-using CryptoExchange.Repository.Interfaces;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
+
 
 // Add services to the container.
 
@@ -15,9 +16,21 @@ builder.Services.AddSwaggerGen();
 // TODO: make it generic/ take profilers automatically
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddDbContext<DatabaseContext>();
-builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-builder.Services.AddScoped<ITransactionService, TransactionService>();
-builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
+builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+    .AddEntityFrameworkStores<DatabaseContext>()
+    .AddDefaultTokenProviders();
+
+builder.Services.AddServices();
+builder.Services.AddRepositories();
+
+builder.Services.AddCors(options => options.AddPolicy("ApiCorsPolicy", builder =>
+{
+    builder.WithOrigins("http://localhost:4200").AllowAnyMethod().AllowAnyHeader();
+}));
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme);
+builder.Services.AddAuthorization();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -33,10 +46,14 @@ using (var serviceScope = app.Services.GetService<IServiceScopeFactory>()?.Creat
     var context = serviceScope?.ServiceProvider.GetRequiredService<DatabaseContext>();
     context?.Database.Migrate();
 }
-app.UseHttpsRedirection();
+app.UseCors(corsPolicyBuilder => corsPolicyBuilder
+    .AllowAnyOrigin()
+    .AllowAnyMethod()
+    .AllowAnyHeader()); app.UseHttpsRedirection();
+app.UseCors("ApiCorsPolicy");
 
+app.UseAuthentication();
 app.UseAuthorization();
-
 app.MapControllers();
 
 app.Run();

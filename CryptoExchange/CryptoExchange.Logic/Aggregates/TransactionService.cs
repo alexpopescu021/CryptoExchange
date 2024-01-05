@@ -2,6 +2,7 @@
 using CryptoExchange.Domain.Dto;
 using CryptoExchange.Logic.Interfaces;
 using CryptoExchange.Repository.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using Transaction = CryptoExchange.Domain.Models.Transaction;
 
 namespace CryptoExchange.Logic.Aggregates
@@ -9,11 +10,13 @@ namespace CryptoExchange.Logic.Aggregates
     public class TransactionService : ITransactionService
     {
         private readonly IUnitOfWork _unitOfWork;
-        private IMapper _mapper;
-        public TransactionService(IUnitOfWork unitOfWork, IMapper mapper)
+        private readonly IMapper _mapper;
+        private readonly ICryptoProvider _cryptoProvider;
+        public TransactionService(IUnitOfWork unitOfWork, IMapper mapper, ICryptoProvider cryptoProvider)
         {
             _unitOfWork = unitOfWork;
-            this._mapper = mapper;
+            _mapper = mapper;
+            _cryptoProvider = cryptoProvider;
         }
         public async Task<TransactionGetDto> CreateTransaction(TransactionPostDto transactionDto)
         {
@@ -34,7 +37,11 @@ namespace CryptoExchange.Logic.Aggregates
 
         public async Task<IEnumerable<TransactionGetDto>> GetAllTransactions()
         {
-            var transactions = await _unitOfWork.Transactions.GetAllAsync();
+            var transactions = await _unitOfWork.Transactions.GetQuery()
+                .Include(t => t.SourceCurrency)
+                .Include(t => t.TargetCurrency)
+                .Include(u => u.User)
+                .ToListAsync();
             return _mapper.Map<IEnumerable<TransactionGetDto>>(transactions);
         }
 
@@ -51,5 +58,21 @@ namespace CryptoExchange.Logic.Aggregates
             return updated > 0;
         }
 
+        public async Task<double> Convert(string convertFromSymbol, string convertToSymbol, double amount)
+        {
+            var price = await _cryptoProvider.GetPrice(convertFromSymbol, convertToSymbol);
+
+            price *= amount;
+            var transactionFeeAmount = price * (double)(new Transaction().ConversionRate / 100);
+
+            // Perform the conversion logic (replace this with your actual conversion logic)
+            // For simplicity, let's assume it's a 1:1 conversion
+
+            // If you have a specific conversion rate for each fiat currency, you can retrieve it here
+            // Example: double conversionRate = fiatCurrency.ConversionRate;
+
+            return Math.Round((price - transactionFeeAmount), 5);
+
+        }
     }
 }

@@ -1,10 +1,9 @@
-﻿using CryptoExchange.Domain.Models;
-
-namespace CryptoExchange.Repository.Interfaces
+﻿namespace CryptoExchange.Repository.Interfaces
 {
-    public interface IRepository<TEntity> where TEntity : Entity
+    public interface IGenericRepository<TEntity> where TEntity : class
     {
         public Task<IEnumerable<TEntity>> GetAllAsync();
+        public IQueryable<TEntity> GetQuery();
 
         public Task<TEntity> GetAsync(int id);
 

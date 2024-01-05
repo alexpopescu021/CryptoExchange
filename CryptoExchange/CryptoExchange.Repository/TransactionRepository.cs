@@ -7,6 +7,7 @@ namespace CryptoExchange.Repository
     {
         public TransactionRepository(DatabaseContext context) : base(context)
         {
+
         }
     }
 }

@@ -8,7 +8,10 @@ namespace CryptoExchange.Logic.Aggregates
     {
         public TransactionProfile()
         {
-            CreateMap<Transaction, TransactionGetDto>();
+            CreateMap<Transaction, TransactionGetDto>()
+                .ForMember(d => d.TargetCurrencyCode, o => o.MapFrom(s => s.TargetCurrency.CurrencyCode))
+                .ForMember(d => d.SourceCurrencyCode, o => o.MapFrom(s => s.SourceCurrency.CurrencyCode))
+                .ForMember(d => d.Username, o => o.MapFrom(s => s.User.Username));
             //.ForMember(dest => dest.ConversionRate, opt => opt.MapFrom(src => src.ConversionRate));
             CreateMap<Transaction, TransactionPostDto>();
 
