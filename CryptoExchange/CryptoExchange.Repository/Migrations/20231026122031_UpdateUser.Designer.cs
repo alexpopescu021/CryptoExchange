@@ -4,6 +4,7 @@ using CryptoExchange.Repository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CryptoExchange.Repository.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20231026122031_UpdateUser")]
+    partial class UpdateUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -108,15 +111,6 @@ namespace CryptoExchange.Repository.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Portfolios");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            CurrencyId = 1,
-                            UserId = 1,
-                            Value = 123m
-                        });
                 });
 
             modelBuilder.Entity("CryptoExchange.Domain.Models.Settings", b =>
@@ -192,7 +186,7 @@ namespace CryptoExchange.Repository.Migrations
                             SourcePrice = 100m,
                             TargetCurrencyId = 2,
                             TargetPrice = 40m,
-                            TransactionDate = new DateTime(2023, 10, 26, 12, 41, 37, 911, DateTimeKind.Utc).AddTicks(146),
+                            TransactionDate = new DateTime(2023, 10, 26, 12, 20, 30, 941, DateTimeKind.Utc).AddTicks(6941),
                             UserId = 1
                         });
                 });

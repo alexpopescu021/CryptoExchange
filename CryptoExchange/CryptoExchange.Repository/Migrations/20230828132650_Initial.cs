@@ -3,10 +3,12 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace CryptoExchange.Domain.Migrations
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
+namespace CryptoExchange.Repository.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -32,27 +34,13 @@ namespace CryptoExchange.Domain.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     CurrencyId = table.Column<int>(type: "int", nullable: false),
-                    IBAN = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Iban = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Amount = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ExternalTransactions", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Settings",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    TransactionFee = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    WithdrawalFee = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Settings", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -63,7 +51,7 @@ namespace CryptoExchange.Domain.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Username = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    EmailAddresses = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    EmailAddress = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     TelephoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -72,6 +60,28 @@ namespace CryptoExchange.Domain.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Users", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Settings",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    WithdrawalCurrencyId = table.Column<int>(type: "int", nullable: false),
+                    TransactionFee = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    WithdrawalFee = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    CurrencyId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Settings", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Settings_Currencies_CurrencyId",
+                        column: x => x.CurrencyId,
+                        principalTable: "Currencies",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -107,10 +117,10 @@ namespace CryptoExchange.Domain.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    TranzactionDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UserId = table.Column<int>(type: "int", nullable: false),
                     SourceCurrencyId = table.Column<int>(type: "int", nullable: false),
                     TargetCurrencyId = table.Column<int>(type: "int", nullable: false),
+                    TransactionDate = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "getdate()"),
                     SourcePrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     TargetPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
                 },
@@ -137,6 +147,25 @@ namespace CryptoExchange.Domain.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.InsertData(
+                table: "Currencies",
+                columns: new[] { "Id", "CurrencyCode", "IsFiat" },
+                values: new object[,]
+                {
+                    { 1, "EUR", true },
+                    { 2, "USD", true }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Users",
+                columns: new[] { "Id", "Address", "EmailAddress", "FirstName", "LastName", "Password", "TelephoneNumber", "Username" },
+                values: new object[] { 1, "test address", "email", "FirstName", "LastName", "password", "028172612", "username" });
+
+            migrationBuilder.InsertData(
+                table: "Transactions",
+                columns: new[] { "Id", "SourceCurrencyId", "SourcePrice", "TargetCurrencyId", "TargetPrice", "TransactionDate", "UserId" },
+                values: new object[] { 1, 1, 100m, 2, 40m, new DateTime(2023, 8, 28, 13, 26, 50, 860, DateTimeKind.Utc).AddTicks(4383), 1 });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Portfolios_CurrencyId",
                 table: "Portfolios",
@@ -146,6 +175,11 @@ namespace CryptoExchange.Domain.Migrations
                 name: "IX_Portfolios_UserId",
                 table: "Portfolios",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Settings_CurrencyId",
+                table: "Settings",
+                column: "CurrencyId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Transactions_SourceCurrencyId",

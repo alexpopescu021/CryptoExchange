@@ -1,47 +1,55 @@
-﻿using CryptoExchange.Domain.Models;
-using CryptoExchange.Repository.Interfaces;
+﻿using CryptoExchange.Repository.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace CryptoExchange.Repository
 {
-    public class GenericRepository<TEntity> : IRepository<TEntity> where TEntity : class
+    public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEntity : class
     {
-        private readonly DatabaseContext _context;
-        private DbSet<Entity> _dbSet;
+        protected readonly DatabaseContext DbContext;
+        protected readonly DbSet<TEntity> DbSet;
+
         public GenericRepository(DatabaseContext context)
         {
-            _context = context;
-            _dbSet = _context.Set<Entity>();
+            DbContext = context;
+            DbSet = DbContext.Set<TEntity>();
         }
 
-        public async Task<List<Entity>> GetAllAsync()
+        public async Task<IEnumerable<TEntity>> GetAllAsync()
         {
-            return await _dbSet.ToListAsync();
+            return await DbSet.ToListAsync();
         }
 
-        public async Task<Entity> GetAsync(int id)
+        public IQueryable<TEntity> GetQuery()
         {
-            return await _dbSet.FirstOrDefaultAsync(e => e.Id == id);
+            return DbSet.AsQueryable();
         }
 
-        public async Task CreateAsync(Entity entity)
+        public async Task<TEntity> GetAsync(int id)
         {
-            await _dbSet.AddAsync(entity);
+            return (await DbContext.Set<TEntity>().FindAsync(id))!;
+
+            //TODO Fix not found exception
+            //if (result == null)
+            //{
+            //    throw new HttpResponseException(HttpStatusCode.NotFound);
+            //}
+
         }
 
-        public void Update(Entity entity)
+        public async Task CreateAsync(TEntity entity)
         {
-            _dbSet.Update(entity);
+            await DbSet.AddAsync(entity);
         }
 
-        public void Delete(Entity entity)
+        public void Update(TEntity entity)
         {
-            _dbSet.Remove(entity);
+            DbSet.Update(entity);
         }
 
-        public async Task SaveChangesAsync()
+        public void Delete(TEntity entity)
         {
-            await _context.SaveChangesAsync();
+            DbSet.Remove(entity);
         }
+
     }
 }
