@@ -4,6 +4,7 @@ namespace CryptoExchange.Repository.Interfaces
 {
     public interface ICurrencyRepository : IGenericRepository<Currency>
     {
-        object GetByCurrency(string currencySymbol);
+        public Task<Currency?> GetByCodeAsync(string currencyCode);
+        public Task<List<Currency>> GetAllByType(CurrencyType type);
     }
 }

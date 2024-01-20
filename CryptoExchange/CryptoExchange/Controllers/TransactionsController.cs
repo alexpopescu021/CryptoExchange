@@ -39,7 +39,7 @@ namespace CryptoExchange.Controllers
 
         // POST api/<TransactionsController>/convert
         [HttpPost("convert")]
-        public async Task<double> Post([FromBody] TransactionPostDto value, [FromHeader] double amount)
+        public async Task<double> Convert([FromBody] TransactionPostDto value, [FromHeader] double amount)
         {
             return await _transactionService.Convert(value.SourceCurrencyCode, value.TargetCurrencyCode, amount);
         }

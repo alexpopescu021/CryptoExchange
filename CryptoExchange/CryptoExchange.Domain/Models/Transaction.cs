@@ -10,7 +10,7 @@
         public decimal SourcePrice { get; set; }
         public decimal TargetPrice { get; set; }
         // computed column  1 target = x * source
-        public decimal ConversionRate { get; set; } = 3;
+        public decimal ConversionRate { get; set; } = (decimal)0.15;
         public virtual Currency SourceCurrency { get; set; } = new();
         public virtual Currency TargetCurrency { get; set; } = new();
         public User User { get; set; } = new();

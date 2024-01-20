@@ -5,7 +5,7 @@ namespace CryptoExchange.Repository
 {
     public class DatabaseContext : DbContext
     {
-        private const string ConnectionString = "Server=localhost; Integrated Security=SSPI; Database=Crypto; TrustServerCertificate=True";
+        private const string ConnectionString = "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=master;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)
             => options.UseSqlServer(ConnectionString);

@@ -57,7 +57,22 @@ namespace CryptoExchange.Controllers
             return Ok();
         }
 
+        [HttpPost("login")]
+        public async Task<IActionResult> ChangeConversionRate([FromBody] decimal amount)
+        {
+            var user = await _userService.GetUser(request.Username);
+            if (user == null)
+            {
+                return BadRequest("User not found.");
+            }
 
+            if (!await _passwordHelper.VerifyPasswordHash(request.Password, request))
+            {
+                return BadRequest("Wrong password.");
+            }
+
+            return Ok();
+        }
 
     }
 }

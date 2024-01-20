@@ -5,9 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace CryptoExchange.Domain.Dto;
-public class CurrencyGetDto
+public class CurrencyPostDto
 {
     public string CurrencyCode { get; set; } = string.Empty;
-    public bool IsFiat { get; set; }
 
 }

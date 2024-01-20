@@ -1,4 +1,5 @@
-﻿using CryptoExchange.Logic.Interfaces;
+﻿using CryptoExchange.Domain.Dto;
+using CryptoExchange.Logic.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CryptoExchange.Controllers;
@@ -8,27 +9,29 @@ namespace CryptoExchange.Controllers;
 public class AdminController : ControllerBase
 {
     private readonly ICryptoProvider _cryptoProvider;
-    public AdminController(ICryptoProvider cryptoProvider)
+    private readonly ICurrencyService _currencyService;
+    public AdminController(ICryptoProvider cryptoProvider, ICurrencyService currencyService)
     {
         _cryptoProvider = cryptoProvider;
+        _currencyService = currencyService;
     }
 
-    [HttpGet]
+    [HttpGet("getfiat")]
     public async Task<string> GetAllFiat()
     {
         return await _cryptoProvider.GetFiatList();
     }
 
-    [HttpPost]
-    public async Task<string> AddSupportedFiat()
+    [HttpGet("getcrypto")]
+    public async Task<string> GetAllCrypto()
     {
         return await _cryptoProvider.GetCoinList();
     }
 
-    [HttpPost]
-    public async Task<string> AddSupportedCrypto()
+    [HttpPost("addcurr")]
+    public async Task<bool> AddSupportedFiat(CurrencyGetDto[] fiats)
     {
-        return await _cryptoProvider.GetCoinList();
+        return await _currencyService.AddSupportedCurrency(fiats);
     }
 
 }
