@@ -17,13 +17,13 @@ public class AdminController : ControllerBase
     }
 
     [HttpGet("getfiat")]
-    public async Task<string> GetAllFiat()
+    public async Task<Dictionary<string, string>> GetAllFiat()
     {
         return await _cryptoProvider.GetFiatList();
     }
 
     [HttpGet("getcrypto")]
-    public async Task<string> GetAllCrypto()
+    public async Task<List<string>> GetAllCrypto()
     {
         return await _cryptoProvider.GetCoinList();
     }

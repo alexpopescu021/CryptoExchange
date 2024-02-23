@@ -1,10 +1,12 @@
-﻿using CryptoExchange.Logic.Interfaces;
+﻿using CryptoExchange.Domain.Dto;
+using CryptoExchange.Logic.Interfaces;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace CryptoExchange.Logic.Aggregates;
 public class CryptoProvider : ICryptoProvider
 {
-    public async Task<string> GetCoinList()
+    public async Task<List<string>> GetCoinList()
     {
         var client = new HttpClient();
         var httpRequestMessage = new HttpRequestMessage
@@ -18,7 +20,25 @@ public class CryptoProvider : ICryptoProvider
 
         var response = await client.SendAsync(httpRequestMessage);
 
-        return await response.Content.ReadAsStringAsync();
+        if (response.IsSuccessStatusCode)
+        {
+            var responseContent = await response.Content.ReadAsStringAsync();
+            var jsonObject = JObject.Parse(responseContent);
+
+            var symbols = new List<string>();
+
+            // Iterate through the properties of the 'Data' object and extract the 'symbol' property
+            foreach (var item in jsonObject["Data"])
+            {
+                symbols.Add(item.First["symbol"].ToString());
+            }
+
+            return symbols;
+        }
+        else
+        {
+            throw new HttpRequestException($"Request failed with status code {response.StatusCode}");
+        }
     }
 
     public async Task<double> GetPrice(string convertFromSymbol, string convertToSymbol)
@@ -47,17 +67,24 @@ public class CryptoProvider : ICryptoProvider
         return result.Values.First();
     }
 
-    public async Task<string> GetFiatList()
+    public async Task<Dictionary<string, string>> GetFiatList()
     {
         var client = new HttpClient();
         var httpRequestMessage = new HttpRequestMessage
         {
             Method = HttpMethod.Get,
-            RequestUri = new Uri("https://api.currencylayer.com/list?access_key=79bb00227550668266d760885e6b0784")
+            RequestUri = new Uri("http://api.currencylayer.com/list?access_key=79bb00227550668266d760885e6b0784")
         };
 
         var response = await client.SendAsync(httpRequestMessage);
 
-        return await response.Content.ReadAsStringAsync();
+        if (response.IsSuccessStatusCode)
+        {
+            var responseContent = await response.Content.ReadAsStringAsync();
+            var responseObject = JsonConvert.DeserializeObject<CurrencyGetListDto>(responseContent);
+            if (responseObject != null) return responseObject.Currencies;
+        }
+
+        throw new HttpRequestException($"Request failed with status code {response.StatusCode}");
     }
 }
