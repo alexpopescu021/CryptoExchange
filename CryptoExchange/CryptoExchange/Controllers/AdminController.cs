@@ -1,5 +1,4 @@
-﻿using CryptoExchange.Domain.Dto;
-using CryptoExchange.Logic.Interfaces;
+﻿using CryptoExchange.Logic.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CryptoExchange.Controllers;
@@ -29,7 +28,7 @@ public class AdminController : ControllerBase
     }
 
     [HttpPost("addcurr")]
-    public async Task<bool> AddSupportedFiat(CurrencyGetDto[] fiats)
+    public async Task<bool> AddSupportedFiat(string[] fiats)
     {
         return await _currencyService.AddSupportedCurrency(fiats);
     }

@@ -18,23 +18,29 @@ namespace CryptoExchange.Logic.Aggregates
             _currencyRepository = currencyRepository;
         }
 
-        public async Task<bool> AddSupportedCurrency(CurrencyGetDto[] currencyDto)
+        public async Task<bool> AddSupportedCurrency(string[] currencyDto)
         {
-            var currencyList = _mapper.Map<Currency[]>(currencyDto);
 
             // logic
-            try { 
-                foreach(var currency in currencyList)
+            try
+            {
+                foreach (var currency in currencyDto)
                 {
-                    if(_currencyRepository.GetByCodeAsync(currency.CurrencyCode) != null)
+                    if (_currencyRepository.GetByCodeAsync(currency) != null)
                     {
-                        await _unitOfWork.Currencies.CreateAsync(currency);
+                        var dbCurrency = new Currency()
+                        {
+                            CurrencyCode = currency,
+                            IsFiat = true,
+                        };
+                        await _unitOfWork.Currencies.CreateAsync(dbCurrency);
                         await _unitOfWork.SaveChangesAsync();
                     }
                 }
             }
-            catch { 
-                return false; 
+            catch
+            {
+                return false;
             }
             return true;
         }

@@ -37,7 +37,7 @@ namespace CryptoExchange.Controllers
             {
                 return Ok();
             }
-            return BadRequest();
+            return BadRequest("User already exists");
         }
 
         [HttpPost("login")]
@@ -54,7 +54,7 @@ namespace CryptoExchange.Controllers
                 return BadRequest("Wrong password.");
             }
 
-            return Ok();
+            return Ok(request);
         }
 
         [HttpPost("conversionRate")]
