@@ -18,25 +18,43 @@ namespace CryptoExchange.Logic.Aggregates
             _currencyRepository = currencyRepository;
         }
 
-        public async Task<bool> AddSupportedCurrency(string[] currencyDto)
+        public async Task<bool> AddSupportedCurrency(SupportedCurrenciesGetDto currencyDto)
         {
 
             // logic
             try
             {
-                foreach (var currency in currencyDto)
+                // Retrieve currencies from the database
+                var dbCurrencies = await _currencyRepository.GetAllAsync();
+
+                // Convert currencyDto to HashSet for efficient lookup
+                var incomingCurrencies = new HashSet<string>(currencyDto.Currencies);
+
+                // Find currencies to remove
+                var currenciesToRemove = dbCurrencies.Where(c => !incomingCurrencies.Contains(c.CurrencyCode)).ToList();
+
+                // Find currencies to add
+                var currenciesToAdd = currencyDto.Currencies.Where(c => !dbCurrencies.Any(dbC => dbC.CurrencyCode == c)).ToList();
+
+                // Remove currencies
+                foreach (var currency in currenciesToRemove)
                 {
-                    if (_currencyRepository.GetByCodeAsync(currency) != null)
-                    {
-                        var dbCurrency = new Currency()
-                        {
-                            CurrencyCode = currency,
-                            IsFiat = true,
-                        };
-                        await _unitOfWork.Currencies.CreateAsync(dbCurrency);
-                        await _unitOfWork.SaveChangesAsync();
-                    }
+                    _unitOfWork.Currencies.Delete(currency);
                 }
+
+                // Add currencies
+                foreach (var currency in currenciesToAdd)
+                {
+                    var dbCurrency = new Currency()
+                    {
+                        CurrencyCode = currency,
+                        IsFiat = currencyDto.CurrencyType == "fiat"
+                    };
+                    await _unitOfWork.Currencies.CreateAsync(dbCurrency);
+                }
+
+                await _unitOfWork.SaveChangesAsync();
+
             }
             catch
             {
