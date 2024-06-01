@@ -13,9 +13,12 @@ namespace CryptoExchange.Controllers
     public class TransactionsController : ControllerBase
     {
         private readonly ITransactionService _transactionService;
-        public TransactionsController(ITransactionService transactionService)
+        private readonly IPortofolioService _portofolioService;
+
+        public TransactionsController(ITransactionService transactionService, IPortofolioService portofolioService)
         {
             _transactionService = transactionService;
+            _portofolioService = portofolioService;
         }
         // GET: api/<TransactionsController>
         [HttpGet]
@@ -25,10 +28,17 @@ namespace CryptoExchange.Controllers
         }
 
         // GET api/<TransactionsController>/5
-        [HttpGet("{id}")]
+        [HttpGet("id/{id}")]
         public async Task<Transaction> Get(int id)
         {
             return await _transactionService.GetTransactionById(id);
+        }
+
+        // GET api/<TransactionsController>/5
+        [HttpGet("currency/{currency}")]
+        public decimal? Get(string currency)
+        {
+            return _portofolioService.GetPortofolioVAlueForCurrentCurrency(currency);
         }
 
         // POST api/<TransactionsController>
@@ -42,12 +52,6 @@ namespace CryptoExchange.Controllers
         public async Task<double> Convert([FromBody] TransactionPostDto value, [FromHeader] double amount)
         {
             return await _transactionService.Convert(value.SourceCurrencyCode, value.TargetCurrencyCode, amount);
-        }
-
-        // PUT api/<TransactionsController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
         }
 
         // DELETE api/<TransactionsController>/5

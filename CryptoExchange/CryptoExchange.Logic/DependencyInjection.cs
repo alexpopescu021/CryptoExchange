@@ -10,6 +10,7 @@ public static class DependencyInjection
     {
         services.AddScoped<ICurrencyService, CurrencyService>();
         services.AddScoped<ICryptoProvider, CryptoProvider>();
+        services.AddScoped<IPortofolioService, PortofolioService>();
         services.AddScoped<ITransactionService, TransactionService>();
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IPasswordHelper, PasswordHelper>();

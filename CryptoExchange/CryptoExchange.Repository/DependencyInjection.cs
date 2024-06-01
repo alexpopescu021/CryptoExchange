@@ -9,6 +9,8 @@ public static class DependencyInjection
     {
         services.AddScoped<ITransactionRepository, TransactionRepository>();
         services.AddScoped<ICurrencyRepository, CurrencyRepository>();
+        services.AddScoped<ICurrencyValueRepository, CurrencyValueRepository>();
+        services.AddScoped<IPortfolioRepository, PortfolioRepository>();
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         return services;

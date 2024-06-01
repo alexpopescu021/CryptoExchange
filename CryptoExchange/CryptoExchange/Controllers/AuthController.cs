@@ -35,7 +35,7 @@ namespace CryptoExchange.Controllers
 
             if (await _userService.Register(request.Username, passwordHash, passwordSalt))
             {
-                return Ok();
+                return Ok(request);
             }
             return BadRequest("User already exists");
         }
