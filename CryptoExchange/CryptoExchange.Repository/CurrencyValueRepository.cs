@@ -1,5 +1,6 @@
 ﻿using CryptoExchange.Domain.Models;
 using CryptoExchange.Repository.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace CryptoExchange.Repository
 {
@@ -9,5 +10,18 @@ namespace CryptoExchange.Repository
         {
 
         }
+        public CurrencyValue? GetByCurrencyCodeAndPortfolioIdAsync(string currencyCode, int portfolioId)
+        {
+            return DbContext.CurrencyValue
+                .Where(cv => cv.Currency.CurrencyCode == currencyCode && cv.PortfolioId == portfolioId).FirstOrDefault();
+        }
+
+        public async Task<IEnumerable<CurrencyValue>> GetByCurrencyIdAsync(int currencyId)
+        {
+            return await DbContext.CurrencyValue
+                .Where(cv => cv.CurrencyId == currencyId)
+                .ToListAsync();
+        }
+
     }
 }

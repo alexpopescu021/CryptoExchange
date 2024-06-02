@@ -6,6 +6,8 @@
         IUserRepository Users { get; }
         ICurrencyRepository Currencies { get; }
         IPortfolioRepository Portfolio { get; }
+        ICurrencyValueRepository CurrencyValues { get; }
+
         public Task<int> SaveChangesAsync();
     }
 }

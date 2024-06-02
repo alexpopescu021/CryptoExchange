@@ -43,15 +43,22 @@ namespace CryptoExchange.Controllers
 
         // POST api/<TransactionsController>
         [HttpPost]
-        public void Post([FromBody] TransactionPostDto value)
+        public void Post([FromBody] ConversionDto value)
         {
         }
 
         // POST api/<TransactionsController>/convert
         [HttpPost("convert")]
-        public async Task<double> Convert([FromBody] TransactionPostDto value, [FromHeader] double amount)
+        public async Task<decimal> Convert([FromBody] ConversionDto value)
         {
-            return await _transactionService.Convert(value.SourceCurrencyCode, value.TargetCurrencyCode, amount);
+            return await _transactionService.Convert(value);
+        }
+
+        // POST api/<TransactionsController>/convert
+        [HttpGet("convert/{from}/{to}/{fromAmount}")]
+        public async Task<decimal> GetConversionAmount(string from, string to, decimal fromAmount)
+        {
+            return await _transactionService.GetAmountFromTo(from, to, fromAmount);
         }
 
         // DELETE api/<TransactionsController>/5

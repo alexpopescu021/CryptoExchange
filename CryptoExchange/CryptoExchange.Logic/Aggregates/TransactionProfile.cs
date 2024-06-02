@@ -13,7 +13,17 @@ namespace CryptoExchange.Logic.Aggregates
                 .ForMember(d => d.SourceCurrencyCode, o => o.MapFrom(s => s.SourceCurrency.CurrencyCode))
                 .ForMember(d => d.Username, o => o.MapFrom(s => s.User.Username));
             //.ForMember(dest => dest.ConversionRate, opt => opt.MapFrom(src => src.ConversionRate));
-            CreateMap<Transaction, TransactionPostDto>();
+            CreateMap<Transaction, TransactionPostDto>()
+                .ForMember(dest => dest.TargetCurrencyCode, opt => opt.MapFrom(s => s.TargetCurrency)) // Ignore mapping of TargetCurrency
+                .ForMember(dest => dest.TargetCurrencyCode, opt => opt.MapFrom(s => s.SourceCurrency)); // Ignore mapping of SourceCurrency
+
+            CreateMap<TransactionPostDto, Transaction>()
+           .ForMember(dest => dest.SourceCurrencyId, opt => opt.Ignore()) // Ignore mapping of SourceCurrencyId
+           .ForMember(dest => dest.TargetCurrencyId, opt => opt.Ignore()) // Ignore mapping of TargetCurrencyId
+           .ForMember(dest => dest.TransactionDate, opt => opt.MapFrom(src => src.TransactionDate)) // Map TransactionDate directly
+           .ForMember(dest => dest.SourcePrice, opt => opt.MapFrom(src => src.SourcePrice)) // Map SourcePrice directly
+           .ForMember(dest => dest.TargetPrice, opt => opt.MapFrom(src => src.TargetPrice)) // Map TargetPrice directly
+           .ForMember(dest => dest.ConversionRate, opt => opt.Ignore()); // Calculate ConversionRate
 
         }
     }

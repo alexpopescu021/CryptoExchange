@@ -1,7 +1,14 @@
-﻿namespace CryptoExchange.Domain.Models
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace CryptoExchange.Domain.Models
 {
-    public class Transaction : Entity
+    public class Transaction
     {
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [Key]
+        public int Id { get; set; }
+
         public int UserId { get; set; }
         public int SourceCurrencyId { get; set; }
         public int TargetCurrencyId { get; set; }

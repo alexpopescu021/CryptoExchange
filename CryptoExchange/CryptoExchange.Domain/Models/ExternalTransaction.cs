@@ -1,7 +1,14 @@
-﻿namespace CryptoExchange.Domain.Models
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace CryptoExchange.Domain.Models
 {
-    public class ExternalTransaction : Entity
+    public class ExternalTransaction
     {
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [Key]
+        public int Id { get; set; }
+
         public int CurrencyId { get; set; }
 
         public string Iban { get; set; } = string.Empty;

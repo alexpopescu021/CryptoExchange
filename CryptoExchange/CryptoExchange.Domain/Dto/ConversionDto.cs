@@ -2,14 +2,13 @@
 
 namespace CryptoExchange.Domain.Dto
 {
-    public class TransactionPostDto : Entity
+    public class ConversionDto
     {
         public string SourceCurrencyCode { get; set; } = string.Empty;
         public string TargetCurrencyCode { get; set; } = string.Empty;
-        public DateTime TransactionDate { get; set; } = new();
-        // change from Price
-        public decimal SourcePrice { get; set; }
-        public decimal TargetPrice { get; set; }
 
+        public decimal SourceValue { get; set; }
+        public decimal TargetValue { get; set; }
+        public decimal ConversionFee { get; set; }
     }
 }

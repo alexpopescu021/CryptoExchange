@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using CryptoExchange.Domain.Dto;
+using CryptoExchange.Domain.Models;
 using CryptoExchange.Logic.Interfaces;
 using CryptoExchange.Repository.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -12,11 +13,15 @@ namespace CryptoExchange.Logic.Aggregates
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly ICryptoProvider _cryptoProvider;
-        public TransactionService(IUnitOfWork unitOfWork, IMapper mapper, ICryptoProvider cryptoProvider)
+        private readonly ICurrencyRepository _currencyRepository;
+        private readonly ICurrencyValueRepository _currencyValueRepository;
+        public TransactionService(IUnitOfWork unitOfWork, IMapper mapper, ICryptoProvider cryptoProvider, ICurrencyValueRepository currencyValueRepository, ICurrencyRepository currencyRepository)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _cryptoProvider = cryptoProvider;
+            _currencyValueRepository = currencyValueRepository;
+            _currencyRepository = currencyRepository;
         }
         public async Task<TransactionGetDto> CreateTransaction(TransactionPostDto transactionDto)
         {
@@ -58,21 +63,66 @@ namespace CryptoExchange.Logic.Aggregates
             return updated > 0;
         }
 
-        public async Task<double> Convert(string convertFromSymbol, string convertToSymbol, double amount)
+        public async Task<decimal> Convert(ConversionDto value)
         {
-            var price = await _cryptoProvider.GetPrice(convertFromSymbol, convertToSymbol);
+            // Retrieve the current values for the source and target currencies
+            var sourceCurrencyValue = _currencyValueRepository
+                .GetByCurrencyCodeAndPortfolioIdAsync(value.SourceCurrencyCode, 1);
 
-            price *= amount;
-            var transactionFeeAmount = price * (double)(new Transaction().ConversionRate / 100);
+            // Attempt to retrieve the target currency value
+            var targetCurrencyValue = _currencyValueRepository
+                .GetByCurrencyCodeAndPortfolioIdAsync(value.TargetCurrencyCode, 1);
 
-            // Perform the conversion logic (replace this with your actual conversion logic)
-            // For simplicity, let's assume it's a 1:1 conversion
+            if (sourceCurrencyValue == null)
+            {
+                throw new Exception("Source currency not found");
+            }
 
-            // If you have a specific conversion rate for each fiat currency, you can retrieve it here
-            // Example: double conversionRate = fiatCurrency.ConversionRate;
+            if (targetCurrencyValue == null)
+            {
+                var currency = await _currencyRepository.GetByCodeAsync(value.TargetCurrencyCode);
+                // If target currency value is not found, insert a new record
+                targetCurrencyValue = new CurrencyValue
+                {
+                    PortfolioId = 1, // Adjust as needed
+                    CurrencyId = currency.Id, // You need to implement this method to get currency ID
+                    Value = value.TargetValue // Set initial value
+                };
 
-            return Math.Round((price - transactionFeeAmount), 5);
+                await _unitOfWork.CurrencyValues.CreateAsync(targetCurrencyValue);
+                await _unitOfWork.SaveChangesAsync();
+            }
+            else
+            {
+                // Update the target currency value
+                targetCurrencyValue.Value += value.TargetValue;
+            }
 
+            // Update the source currency value
+            sourceCurrencyValue.Value -= value.SourceValue;
+           // _unitOfWork.CurrencyValues.Update(sourceCurrencyValue);
+
+            //await _unitOfWork.SaveChangesAsync();
+
+            // Create a transaction from the ConversionDto values
+            var transactionDto = new TransactionPostDto
+            {
+                SourceCurrencyCode = value.SourceCurrencyCode,
+                TargetCurrencyCode = value.TargetCurrencyCode,
+                TransactionDate = DateTime.UtcNow, // You may adjust the transaction date as needed
+                SourcePrice = value.SourceValue,
+                TargetPrice = value.TargetValue
+            };
+
+            await CreateTransaction(transactionDto);
+
+            return targetCurrencyValue.Value;
+        }
+
+
+        public async Task<decimal> GetAmountFromTo(string from, string to, decimal value)
+        {
+            return await _cryptoProvider.GetConversionAmountFromTo(from, to, value);
         }
     }
 }

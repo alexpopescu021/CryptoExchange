@@ -4,6 +4,7 @@ using CryptoExchange.Repository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CryptoExchange.Repository.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20240602202122_redo-currency")]
+    partial class redocurrency
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -77,7 +80,8 @@ namespace CryptoExchange.Repository.Migrations
 
                     b.HasIndex("CurrencyId");
 
-                    b.HasIndex("PortfolioId");
+                    b.HasIndex("PortfolioId", "CurrencyId")
+                        .IsUnique();
 
                     b.ToTable("CurrencyValue");
                 });
@@ -222,7 +226,7 @@ namespace CryptoExchange.Repository.Migrations
                             SourcePrice = 100m,
                             TargetCurrencyId = 2,
                             TargetPrice = 40m,
-                            TransactionDate = new DateTime(2024, 6, 2, 20, 58, 21, 778, DateTimeKind.Utc).AddTicks(4838),
+                            TransactionDate = new DateTime(2024, 6, 2, 20, 21, 21, 945, DateTimeKind.Utc).AddTicks(2316),
                             UserId = 1
                         });
                 });

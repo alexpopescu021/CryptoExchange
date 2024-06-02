@@ -1,5 +1,6 @@
 ﻿using CryptoExchange.Domain.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace CryptoExchange.Repository
 {
@@ -18,6 +19,14 @@ namespace CryptoExchange.Repository
                 .HasForeignKey(e => e.SourceCurrencyId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+            {
+                var idProperty = entityType.FindProperty("Id");
+                if (idProperty != null && idProperty.ClrType == typeof(int))
+                {
+                    idProperty.ValueGenerated = ValueGenerated.OnAdd;
+                }
+            }
 
             modelBuilder.Entity<Currency>()
                 .HasMany(e => e.TargetTransactions)
@@ -26,21 +35,16 @@ namespace CryptoExchange.Repository
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<CurrencyValue>()
-               .HasKey(cv => new { cv.PortfolioId, cv.CurrencyId });
-
-            modelBuilder.Entity<CurrencyValue>()
                 .HasOne(cv => cv.Portfolio)
                 .WithMany(p => p.CurrencyValues)
                 .HasForeignKey(cv => cv.PortfolioId)
-                .OnDelete(DeleteBehavior.Restrict); // Adjusted delete behavior
-
+                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<CurrencyValue>()
                 .HasOne(cv => cv.Currency)
-                .WithMany()
+                .WithMany(c => c.CurrencyValues)
                 .HasForeignKey(cv => cv.CurrencyId)
-                .OnDelete(DeleteBehavior.Restrict); // Adjusted delete behavior
-
+                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Transaction>()
                 .HasOne(e => e.User)
@@ -55,6 +59,18 @@ namespace CryptoExchange.Repository
             //modelBuilder.Entity<Transaction>()
             //    .Property(t => t.ConversionRate)
             //    .HasColumnType("decimal(18,2)");
+
+            modelBuilder.Entity<Transaction>()
+                .Property(t => t.TargetPrice)
+                .HasColumnType("decimal(18,6)");
+
+            modelBuilder.Entity<Transaction>()
+                .Property(t => t.SourcePrice)
+                .HasColumnType("decimal(18,6)");
+
+            modelBuilder.Entity<CurrencyValue>()
+                .Property(t => t.Value)
+                .HasColumnType("decimal(18,6)");
 
             modelBuilder.Entity<Transaction>()
                 .ToTable("Transactions");

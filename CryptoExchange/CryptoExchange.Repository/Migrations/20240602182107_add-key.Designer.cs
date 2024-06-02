@@ -4,6 +4,7 @@ using CryptoExchange.Repository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CryptoExchange.Repository.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20240602182107_add-key")]
+    partial class addkey
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -58,26 +61,24 @@ namespace CryptoExchange.Repository.Migrations
 
             modelBuilder.Entity("CryptoExchange.Domain.Models.CurrencyValue", b =>
                 {
+                    b.Property<int>("PortfolioId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CurrencyId")
+                        .HasColumnType("int");
+
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("CurrencyId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("PortfolioId")
-                        .HasColumnType("int");
-
                     b.Property<decimal>("Value")
-                        .HasColumnType("decimal(18,6)");
+                        .HasColumnType("decimal(18,2)");
 
-                    b.HasKey("Id");
+                    b.HasKey("PortfolioId", "CurrencyId");
 
                     b.HasIndex("CurrencyId");
-
-                    b.HasIndex("PortfolioId");
 
                     b.ToTable("CurrencyValue");
                 });
@@ -187,13 +188,13 @@ namespace CryptoExchange.Repository.Migrations
                         .HasColumnType("int");
 
                     b.Property<decimal>("SourcePrice")
-                        .HasColumnType("decimal(18,6)");
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("TargetCurrencyId")
                         .HasColumnType("int");
 
                     b.Property<decimal>("TargetPrice")
-                        .HasColumnType("decimal(18,6)");
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<DateTime>("TransactionDate")
                         .ValueGeneratedOnAdd()
@@ -222,7 +223,7 @@ namespace CryptoExchange.Repository.Migrations
                             SourcePrice = 100m,
                             TargetCurrencyId = 2,
                             TargetPrice = 40m,
-                            TransactionDate = new DateTime(2024, 6, 2, 20, 58, 21, 778, DateTimeKind.Utc).AddTicks(4838),
+                            TransactionDate = new DateTime(2024, 6, 2, 18, 21, 6, 983, DateTimeKind.Utc).AddTicks(2169),
                             UserId = 1
                         });
                 });
@@ -289,7 +290,7 @@ namespace CryptoExchange.Repository.Migrations
             modelBuilder.Entity("CryptoExchange.Domain.Models.CurrencyValue", b =>
                 {
                     b.HasOne("CryptoExchange.Domain.Models.Currency", "Currency")
-                        .WithMany("CurrencyValues")
+                        .WithMany()
                         .HasForeignKey("CurrencyId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
@@ -364,8 +365,6 @@ namespace CryptoExchange.Repository.Migrations
 
             modelBuilder.Entity("CryptoExchange.Domain.Models.Currency", b =>
                 {
-                    b.Navigation("CurrencyValues");
-
                     b.Navigation("SourceTransactions");
 
                     b.Navigation("TargetTransactions");
