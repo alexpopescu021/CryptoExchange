@@ -51,6 +51,12 @@ namespace CryptoExchange.Logic.Aggregates
 
                     await _unitOfWork.Currencies.CreateAsync(dbCurrency);
 
+
+                    await _unitOfWork.SaveChangesAsync(); // Save changes here
+
+                    // Detach the Currency from the DbContext
+                    _unitOfWork.Detach(dbCurrency);
+
                     var dbCurrencyValue = new CurrencyValue
                     {
                         PortfolioId = 1, // Adjust as needed
@@ -59,9 +65,9 @@ namespace CryptoExchange.Logic.Aggregates
                     };
 
                     await _unitOfWork.CurrencyValues.CreateAsync(dbCurrencyValue);
+                    await _unitOfWork.SaveChangesAsync(); // Save changes again
                 }
 
-                await _unitOfWork.SaveChangesAsync(); // Save changes at the end
             }
             catch (Exception ex)
             {

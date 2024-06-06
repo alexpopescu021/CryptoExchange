@@ -3,10 +3,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CryptoExchange.Domain.Models
 {
-    public class User 
+    public class User : IEntity
     {
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        [Key]
         public int Id { get; set; }
 
         public string Username { get; set; } = string.Empty;

@@ -8,10 +8,8 @@ using System.Threading.Tasks;
 
 namespace CryptoExchange.Domain.Models
 {
-    public class CurrencyValue
+    public class CurrencyValue : IEntity
     {
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        [Key]
         public int Id { get; set; }
 
         public int PortfolioId { get; set; }

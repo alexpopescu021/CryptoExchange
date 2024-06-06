@@ -1,9 +1,10 @@
-﻿using CryptoExchange.Repository.Interfaces;
+﻿using CryptoExchange.Domain.Models;
+using CryptoExchange.Repository.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace CryptoExchange.Repository
 {
-    public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEntity : class
+    public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEntity : class, IEntity
     {
         protected readonly DatabaseContext DbContext;
         protected readonly DbSet<TEntity> DbSet;
@@ -26,7 +27,7 @@ namespace CryptoExchange.Repository
 
         public async Task<TEntity> GetAsync(int id)
         {
-            return (await DbContext.Set<TEntity>().FindAsync(id))!;
+            var result = await DbSet.FindAsync(id);
 
             //TODO Fix not found exception
             //if (result == null)
@@ -34,6 +35,7 @@ namespace CryptoExchange.Repository
             //    throw new HttpResponseException(HttpStatusCode.NotFound);
             //}
 
+            return result;
         }
 
         public async Task CreateAsync(TEntity entity)
@@ -44,12 +46,16 @@ namespace CryptoExchange.Repository
         public void Update(TEntity entity)
         {
             DbSet.Update(entity);
+
+            // Assuming your Id property is named "Id"
+            DbContext.Entry(entity).Property(x => x.Id).IsModified = false;
+
+            DbContext.SaveChanges();
         }
 
         public void Delete(TEntity entity)
         {
             DbSet.Remove(entity);
         }
-
     }
 }

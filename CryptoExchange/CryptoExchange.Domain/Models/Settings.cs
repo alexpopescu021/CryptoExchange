@@ -3,10 +3,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CryptoExchange.Domain.Models
 {
-    public class Settings
+    public class Settings : IEntity
     {
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        [Key]
         public int Id { get; set; }
 
         public int WithdrawalCurrencyId { get; set; }

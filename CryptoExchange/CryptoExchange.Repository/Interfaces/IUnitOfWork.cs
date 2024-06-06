@@ -1,4 +1,7 @@
-﻿namespace CryptoExchange.Repository.Interfaces
+﻿using CryptoExchange.Domain.Models;
+using Microsoft.EntityFrameworkCore;
+
+namespace CryptoExchange.Repository.Interfaces
 {
     public interface IUnitOfWork
     {
@@ -9,5 +12,7 @@
         ICurrencyValueRepository CurrencyValues { get; }
 
         public Task<int> SaveChangesAsync();
+        public void Detach(IEntity entity);
+        public EntityState GetEntityState(IEntity entity);
     }
 }

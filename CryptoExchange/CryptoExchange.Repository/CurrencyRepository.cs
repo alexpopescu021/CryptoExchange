@@ -23,5 +23,11 @@ namespace CryptoExchange.Repository
                 .Where(u => u.IsFiat == isFiat)
                 .ToListAsync();
         }
+
+        public EntityState GetEntityState(IEntity entity)
+        {
+            return DbContext.Entry(entity).State;
+        }
+
     }
 }

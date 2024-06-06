@@ -34,18 +34,6 @@ namespace CryptoExchange.Repository
                 .HasForeignKey(e => e.TargetCurrencyId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<CurrencyValue>()
-                .HasOne(cv => cv.Portfolio)
-                .WithMany(p => p.CurrencyValues)
-                .HasForeignKey(cv => cv.PortfolioId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<CurrencyValue>()
-                .HasOne(cv => cv.Currency)
-                .WithMany(c => c.CurrencyValues)
-                .HasForeignKey(cv => cv.CurrencyId)
-                .OnDelete(DeleteBehavior.Restrict);
-
             modelBuilder.Entity<Transaction>()
                 .HasOne(e => e.User)
                 .WithMany(e => e.Transactions)

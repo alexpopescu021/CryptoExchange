@@ -1,4 +1,6 @@
-﻿using CryptoExchange.Repository.Interfaces;
+﻿using CryptoExchange.Domain.Models;
+using CryptoExchange.Repository.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace CryptoExchange.Repository
 {
@@ -25,5 +27,17 @@ namespace CryptoExchange.Repository
         {
             return _context.SaveChangesAsync();
         }
+
+        public void Detach(IEntity entity)
+        {
+            _context.Entry(entity).State = EntityState.Detached;
+        }
+
+        public EntityState GetEntityState(IEntity entity)
+        {
+            return _context.Entry(entity).State;
+        }
+
+
     }
 }

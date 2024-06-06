@@ -2,7 +2,7 @@
 
 namespace CryptoExchange.Domain.Dto
 {
-    public class TransactionGetDto : Entity
+    public class TransactionGetDto
     {
         public string Username { get; set; } = string.Empty;
         public string SourceCurrencyCode { get; set; } = string.Empty;
