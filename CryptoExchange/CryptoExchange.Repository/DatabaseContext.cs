@@ -124,6 +124,17 @@ namespace CryptoExchange.Repository
                 });
             });
 
+            modelBuilder.Entity<CurrencyValue>(t =>
+            {
+                t.HasData(new
+                {
+                    Id = 1,
+                    CurrencyId = 1,
+                    PortfolioId = 1,
+                    Value = (decimal)123.00,
+                    //ConversionRate = (decimal)1.034
+                });
+            });
 
         }
 

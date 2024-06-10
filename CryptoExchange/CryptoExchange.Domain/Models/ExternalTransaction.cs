@@ -1,7 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-
-namespace CryptoExchange.Domain.Models
+﻿namespace CryptoExchange.Domain.Models
 {
     public class ExternalTransaction : IEntity
     {
@@ -12,7 +9,7 @@ namespace CryptoExchange.Domain.Models
         public string Iban { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;
         public string Amount { get; set; } = string.Empty;
-        public Currency Currency = new();
+        public Currency Currency { get; set; }
 
     }
 }

@@ -1,7 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-
-namespace CryptoExchange.Domain.Models
+﻿namespace CryptoExchange.Domain.Models
 {
     public class Settings : IEntity
     {
@@ -10,6 +7,6 @@ namespace CryptoExchange.Domain.Models
         public int WithdrawalCurrencyId { get; set; }
         public decimal TransactionFee { get; set; }
         public decimal WithdrawalFee { get; set; }
-        public virtual Currency Currency { get; set; } = new();
+        public virtual Currency Currency { get; set; }
     }
 }

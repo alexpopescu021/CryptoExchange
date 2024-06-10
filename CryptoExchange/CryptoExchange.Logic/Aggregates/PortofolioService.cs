@@ -1,6 +1,4 @@
 ﻿using AutoMapper;
-using CryptoExchange.Domain.Dto;
-using CryptoExchange.Domain.Models;
 using CryptoExchange.Logic.Interfaces;
 using CryptoExchange.Repository.Interfaces;
 
@@ -18,6 +16,7 @@ namespace CryptoExchange.Logic.Aggregates
 
         public decimal? GetPortofolioVAlueForCurrentCurrency(string currency)
         {
+            //return _unitOfWork.CurrencyValues.GetCurrencyValueAsync(currency);
             return _unitOfWork.Portfolio.GetCurrencyValueAsync(currency);
         }
     }

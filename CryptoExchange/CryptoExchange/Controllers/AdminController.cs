@@ -28,6 +28,18 @@ public class AdminController : ControllerBase
         return await _cryptoProvider.GetCoinList();
     }
 
+    [HttpGet("getSupportedFiat")]
+    public async Task<CurrencyPostDto[]> GetSupportedFiat()
+    {
+        return await _currencyService.GetSupportedFiat();
+    }
+
+    [HttpGet("getSupportedCrypto")]
+    public async Task<CurrencyPostDto[]> GetSupportedCrypto()
+    {
+        return await _currencyService.GetSupportedCrypto();
+    }
+
     [HttpPost("addcurr")]
     public async Task<bool> AddSupportedFiat([FromBody] SupportedCurrenciesGetDto currencies)
     {

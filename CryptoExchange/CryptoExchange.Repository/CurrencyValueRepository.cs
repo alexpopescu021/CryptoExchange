@@ -23,5 +23,12 @@ namespace CryptoExchange.Repository
                 .ToListAsync();
         }
 
+        public decimal? GetCurrencyValueAsync(string currency)
+        {
+            var currencyValue = DbContext.CurrencyValue.Where(cv => cv.Currency.CurrencyCode == currency).FirstOrDefault();
+
+            return currencyValue?.Value ?? 0m;
+        }
+
     }
 }

@@ -6,6 +6,8 @@ namespace CryptoExchange.Repository.Interfaces
     {
         CurrencyValue? GetByCurrencyCodeAndPortfolioIdAsync(string currencyCode, int portfolioId);
         Task<IEnumerable<CurrencyValue>> GetByCurrencyIdAsync(int currencyId);
+        decimal? GetCurrencyValueAsync(string currency);
+
 
     }
 }

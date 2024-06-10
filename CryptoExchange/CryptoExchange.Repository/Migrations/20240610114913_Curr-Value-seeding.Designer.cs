@@ -4,6 +4,7 @@ using CryptoExchange.Repository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CryptoExchange.Repository.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20240610114913_Curr-Value-seeding")]
+    partial class CurrValueseeding
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -225,7 +228,7 @@ namespace CryptoExchange.Repository.Migrations
                             SourcePrice = 100m,
                             TargetCurrencyId = 2,
                             TargetPrice = 40m,
-                            TransactionDate = new DateTime(2024, 6, 10, 13, 58, 59, 580, DateTimeKind.Utc).AddTicks(2206),
+                            TransactionDate = new DateTime(2024, 6, 10, 11, 49, 13, 676, DateTimeKind.Utc).AddTicks(6009),
                             UserId = 1
                         });
                 });

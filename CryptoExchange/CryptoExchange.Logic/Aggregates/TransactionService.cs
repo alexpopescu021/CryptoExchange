@@ -25,8 +25,15 @@ namespace CryptoExchange.Logic.Aggregates
         }
         public async Task<TransactionGetDto> CreateTransaction(TransactionPostDto transactionDto)
         {
+
+            var sourceCurrency = await _unitOfWork.Currencies.GetByCodeAsync(transactionDto.SourceCurrencyCode);
+            var targetCurrency = await _unitOfWork.Currencies.GetByCodeAsync(transactionDto.TargetCurrencyCode);
+
             var transaction = _mapper.Map<Transaction>(transactionDto);
 
+            transaction.SourceCurrencyId = sourceCurrency!.Id;
+            transaction.TargetCurrencyId = targetCurrency!.Id;
+            transaction.UserId = 1;
             // logic
 
             await _unitOfWork.Transactions.CreateAsync(transaction);
@@ -100,7 +107,7 @@ namespace CryptoExchange.Logic.Aggregates
 
             // Update the source currency value
             sourceCurrencyValue.Value -= value.SourceValue;
-           // _unitOfWork.CurrencyValues.Update(sourceCurrencyValue);
+            // _unitOfWork.CurrencyValues.Update(sourceCurrencyValue);
 
             //await _unitOfWork.SaveChangesAsync();
 
