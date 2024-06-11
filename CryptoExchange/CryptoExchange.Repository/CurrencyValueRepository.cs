@@ -16,11 +16,18 @@ namespace CryptoExchange.Repository
                 .Where(cv => cv.Currency.CurrencyCode == currencyCode && cv.PortfolioId == portfolioId).FirstOrDefault();
         }
 
-        public async Task<IEnumerable<CurrencyValue>> GetByCurrencyIdAsync(int currencyId)
+        public async Task<IEnumerable<CurrencyValue>> GetByCurrencyIdToListAsync(int currencyId)
         {
             return await DbContext.CurrencyValue
                 .Where(cv => cv.CurrencyId == currencyId)
                 .ToListAsync();
+        }
+
+        public async Task<CurrencyValue?> GetByCurrencyIdFirstAsync(int currencyId)
+        {
+            return await DbContext.CurrencyValue
+                .Where(cv => cv.CurrencyId == currencyId)
+                .FirstOrDefaultAsync();
         }
 
         public decimal? GetCurrencyValueAsync(string currency)

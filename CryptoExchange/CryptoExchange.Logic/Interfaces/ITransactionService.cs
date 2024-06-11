@@ -16,6 +16,7 @@ namespace CryptoExchange.Logic.Interfaces
         Task<decimal> Convert(ConversionDto value);
 
         Task<decimal> GetAmountFromTo(string from, string to, decimal value);
+        Task<Transaction> CreateTransactionFromExternalAsync(ExternalTransactionDto externalTransactionDto);
 
     }
 }

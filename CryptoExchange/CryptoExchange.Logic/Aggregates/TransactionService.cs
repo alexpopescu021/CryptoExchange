@@ -47,6 +47,47 @@ namespace CryptoExchange.Logic.Aggregates
             return result;
         }
 
+        public async Task<TransactionDto> CreateTransactionFromExternalAsync(ExternalTransactionDto externalTransactionDto)
+        {
+            // Get the EUR currency from the repository
+            var euroCurrency = await _currencyRepository.GetByCodeAsync("EUR");
+            if (euroCurrency == null)
+            {
+                throw new Exception("EUR currency not found");
+            }
+
+            // Map ExternalTransactionDto to Transaction
+            var transaction = _mapper.Map<Transaction>(externalTransactionDto);
+            transaction.TransactionDate = DateTime.UtcNow;
+            transaction.TargetCurrencyId = euroCurrency.Id;
+            transaction.TargetPrice = externalTransactionDto.Amount;
+
+            // Save the transaction
+            await _unitOfWork.Transactions.CreateAsync(transaction);
+            await _unitOfWork.SaveChangesAsync();
+
+            // Update CurrencyValue
+            var currencyValue = await _currencyValueRepository.GetByCurrencyIdFirstAsync(euroCurrency.Id);
+            if (currencyValue == null)
+            {
+                currencyValue = new CurrencyValue
+                {
+                    CurrencyId = euroCurrency.Id,
+                    Value = externalTransactionDto.Amount
+                };
+                await _unitOfWork.CurrencyValues.CreateAsync(currencyValue);
+            }
+            else
+            {
+                currencyValue.Value += externalTransactionDto.Amount;
+                _unitOfWork.CurrencyValues.Update(currencyValue);
+            }
+
+            await _unitOfWork.SaveChangesAsync();
+
+            return _mapper.Map<TransactionDto>(transaction);
+        }
+
         public async Task<IEnumerable<TransactionGetDto>> GetAllTransactions()
         {
             var transactions = await _unitOfWork.Transactions.GetQuery()

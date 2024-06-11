@@ -66,5 +66,25 @@ namespace CryptoExchange.Controllers
         public void Delete(int id)
         {
         }
+
+        [HttpPost("external")]
+        public async Task<IActionResult> CreateExternalTransaction([FromBody] ExternalTransactionDto externalTransactionDto)
+        {
+            if (externalTransactionDto == null)
+            {
+                return BadRequest();
+            }
+
+            try
+            {
+                var transactionDto = await _transactionService.CreateTransactionFromExternalAsync(externalTransactionDto);
+                return Ok(transactionDto);
+            }
+            catch (Exception ex)
+            {
+                // Handle exception (log it, etc.)
+                return StatusCode(500, ex.Message);
+            }
+        }
     }
 }

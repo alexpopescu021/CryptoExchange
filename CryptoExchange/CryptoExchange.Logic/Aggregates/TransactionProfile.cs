@@ -25,6 +25,12 @@ namespace CryptoExchange.Logic.Aggregates
            .ForMember(dest => dest.TargetPrice, opt => opt.MapFrom(src => src.TargetPrice)) // Map TargetPrice directly
            .ForMember(dest => dest.ConversionRate, opt => opt.Ignore()); // Calculate ConversionRate
 
+            CreateMap<ExternalTransactionDto, Transaction>()
+                .ForMember(dest => dest.SourceCurrencyId, opt => opt.MapFrom(src => src.CurrencyId))
+                .ForMember(dest => dest.SourcePrice, opt => opt.MapFrom(src => src.Amount))
+                .ForMember(dest => dest.TargetPrice, opt => opt.MapFrom(src => src.Amount))
+                .ForMember(dest => dest.ConversionRate, opt => opt.MapFrom(src => 1)) // Assuming a direct conversion
+                .ForMember(dest => dest.TargetCurrencyId, opt => opt.Ignore()); // Target currency will be set in service
         }
     }
 }

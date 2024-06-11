@@ -33,7 +33,7 @@ namespace CryptoExchange.Logic.Aggregates
 
                 foreach (var currency in currenciesToRemove)
                 {
-                    var currencyValuesToRemove = await _currencyValueRepository.GetByCurrencyIdAsync(currency.Id);
+                    var currencyValuesToRemove = await _currencyValueRepository.GetByCurrencyIdToListAsync(currency.Id);
                     foreach (var currencyValue in currencyValuesToRemove)
                     {
                         _unitOfWork.CurrencyValues.Delete(currencyValue);
