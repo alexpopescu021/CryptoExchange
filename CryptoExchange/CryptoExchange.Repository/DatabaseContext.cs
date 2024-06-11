@@ -95,6 +95,16 @@ namespace CryptoExchange.Repository
                         IsFiat = true
                     });
 
+            // dummy currency for an external transaction
+            modelBuilder.Entity<Currency>()
+               .HasData(
+                   new Currency()
+                   {
+                       Id = -1,
+                       CurrencyCode = "",
+                       IsFiat = true
+                   });
+
             modelBuilder.Entity<Transaction>(t =>
             {
                 t.HasData(new

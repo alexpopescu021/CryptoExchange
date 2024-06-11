@@ -4,7 +4,6 @@ using CryptoExchange.Domain.Models;
 using CryptoExchange.Logic.Interfaces;
 using CryptoExchange.Repository.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using Transaction = CryptoExchange.Domain.Models.Transaction;
 
 namespace CryptoExchange.Logic.Aggregates
 {
@@ -60,8 +59,9 @@ namespace CryptoExchange.Logic.Aggregates
             var transaction = _mapper.Map<Transaction>(externalTransactionDto);
             transaction.TransactionDate = DateTime.UtcNow;
             transaction.TargetCurrencyId = euroCurrency.Id;
+            transaction.SourceCurrencyId = -1;
             transaction.TargetPrice = externalTransactionDto.Amount;
-
+            transaction.UserId = 1;
             // Save the transaction
             await _unitOfWork.Transactions.CreateAsync(transaction);
             await _unitOfWork.SaveChangesAsync();
