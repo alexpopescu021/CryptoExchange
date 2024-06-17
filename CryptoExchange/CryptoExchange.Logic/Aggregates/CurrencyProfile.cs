@@ -13,6 +13,9 @@ namespace CryptoExchange.Logic.Aggregates
 
             CreateMap<Currency, CurrencyPostDto>();
             CreateMap<CurrencyPostDto, Currency>();
+
+            CreateMap<CurrencyValue, CurrencyGetDto>()
+            .ForMember(dest => dest.CurrencyCode, opt => opt.MapFrom(src => src.Currency.CurrencyCode));
         }
     }
 }

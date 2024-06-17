@@ -25,5 +25,4 @@ public class CurrenciesController : ControllerBase
     {
         return await _currencyService.GetSupportedFiat();
     }
-
 }

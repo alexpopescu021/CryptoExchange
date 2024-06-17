@@ -6,5 +6,6 @@ namespace CryptoExchange.Repository.Interfaces
     {
         public decimal? GetCurrencyValueAsync(string currency);
 
+        public List<CurrencyValue> GetPortfolio(int id);
     }
 }
