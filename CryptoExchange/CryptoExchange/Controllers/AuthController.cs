@@ -71,7 +71,7 @@ namespace CryptoExchange.Controllers
         }
 
         [HttpGet("{username}")]
-        public async Task<ActionResult<UserDto>> GetUser(string username)
+        public async Task<ActionResult<UserUpdateDto>> GetUser(string username)
         {
             var userDto = await _userService.GetUser(username);
 

@@ -39,10 +39,10 @@ namespace CryptoExchange.Logic.Aggregates
             return true;
         }
 
-        public async Task<UserDto> GetUser(string requestUsername)
+        public async Task<UserUpdateDto> GetUser(string requestUsername)
         {
             var user = await _unitOfWork.Users.GetByUsernameAsync(requestUsername);
-            var userDto = _mapper.Map<UserDto>(user);
+            var userDto = _mapper.Map<UserUpdateDto>(user);
 
             return userDto;
         }

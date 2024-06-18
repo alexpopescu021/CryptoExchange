@@ -10,6 +10,8 @@ namespace CryptoExchange.Logic.Aggregates
         {
             CreateMap<User, UserDto>();
             CreateMap<UserDto, User>();
+            CreateMap<UserUpdateDto, User>();
+            CreateMap<User, UserUpdateDto>();
 
         }
     }
