@@ -46,5 +46,25 @@ namespace CryptoExchange.Logic.Aggregates
 
             return userDto;
         }
+
+        public async Task<UserDto> UpdateUser(string username, UserUpdateDto userUpdateDto)
+        {
+            var user = await _unitOfWork.Users.GetByUsernameAsync(username);
+            if (user == null)
+            {
+                return null;
+            }
+
+            user.FirstName = userUpdateDto.FirstName;
+            user.LastName = userUpdateDto.LastName;
+            user.Email = userUpdateDto.Email;
+            user.TelephoneNumber = userUpdateDto.TelephoneNumber;
+            user.Address = userUpdateDto.Address;
+
+            _unitOfWork.Users.Update(user);
+
+            return _mapper.Map<UserDto>(user);
+        }
+
     }
 }

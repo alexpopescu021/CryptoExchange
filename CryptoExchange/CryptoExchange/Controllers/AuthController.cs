@@ -57,6 +57,32 @@ namespace CryptoExchange.Controllers
             return Ok(request);
         }
 
+        [HttpPut("{username}")]
+        public async Task<IActionResult> UpdateUser(string username, UserUpdateDto userUpdateDto)
+        {
+            var userDto = await _userService.UpdateUser(username, userUpdateDto);
+
+            if (userDto == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(userDto);
+        }
+
+        [HttpGet("{username}")]
+        public async Task<ActionResult<UserDto>> GetUser(string username)
+        {
+            var userDto = await _userService.GetUser(username);
+
+            if (userDto == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(userDto);
+        }
+
         [HttpPost("conversionRate")]
         public async Task<IActionResult> ChangeConversionRate([FromBody] decimal amount)
         {
