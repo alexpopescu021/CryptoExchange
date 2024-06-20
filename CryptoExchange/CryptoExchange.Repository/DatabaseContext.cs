@@ -101,7 +101,7 @@ namespace CryptoExchange.Repository
                    new Currency()
                    {
                        Id = -1,
-                       CurrencyCode = "",
+                       CurrencyCode = "External",
                        IsFiat = true
                    });
 
