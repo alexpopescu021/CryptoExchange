@@ -3,6 +3,10 @@ using CryptoExchange.Domain.Models;
 using CryptoExchange.Logic.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 namespace CryptoExchange.Controllers
 {
@@ -13,12 +17,14 @@ namespace CryptoExchange.Controllers
         private readonly IUserService _userService;
         private readonly UserManager<IdentityUser> _userManager;
         private readonly IPasswordHelper _passwordHelper;
+        private readonly IConfiguration _configuration;
 
-        public AuthController(IUserService userService, UserManager<IdentityUser> userManager, IPasswordHelper passwordHelper)
+        public AuthController(IUserService userService, UserManager<IdentityUser> userManager, IPasswordHelper passwordHelper, IConfiguration configuration)
         {
             _userService = userService;
             _userManager = userManager;
             _passwordHelper = passwordHelper;
+            _configuration = configuration;
         }
 
         [HttpGet]
@@ -54,7 +60,28 @@ namespace CryptoExchange.Controllers
                 return BadRequest("Wrong password.");
             }
 
-            return Ok(request);
+            // Create JWT token
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes(_configuration["Jwt:Key"]);
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new Claim[]
+                {
+                new Claim(ClaimTypes.Name, request.Username)
+                }),
+                Expires = DateTime.UtcNow.AddHours(1),
+                Issuer = _configuration["Jwt:Issuer"],
+                Audience = _configuration["Jwt:Issuer"],
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            };
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            var tokenString = tokenHandler.WriteToken(token);
+
+            return Ok(new
+            {
+                Username = request.Username,
+                Token = tokenString
+            });
         }
 
         [HttpPut("{username}")]

@@ -1,13 +1,14 @@
 ﻿using CryptoExchange.Domain.Dto;
 using CryptoExchange.Domain.Models;
 using CryptoExchange.Logic.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace CryptoExchange.Controllers
 {
-    //[Authorize]
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class TransactionsController : ControllerBase

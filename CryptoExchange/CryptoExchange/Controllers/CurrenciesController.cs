@@ -1,9 +1,11 @@
 ﻿using CryptoExchange.Domain.Dto;
 using CryptoExchange.Logic.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CryptoExchange.Controllers;
 
+[Authorize]
 [Route("api/[controller]")]
 [ApiController]
 public class CurrenciesController : ControllerBase
